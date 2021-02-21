@@ -11,7 +11,7 @@ import RethinkLib from "./lib/rethinkdb.js";
 const app = express(); 
 const rethinkLib = new RethinkLib();
 // Rethink connect
-rethinkLib.connect("equip").catch(console.log);
+rethinkLib.connect(config.dbName, config.dbHost, config.dbPort, config.dbUser, config.dbPassword, config.dbTimeout).catch(console.log);
 // Express:Cors
 app.use(cors({
     origin: config.cors,

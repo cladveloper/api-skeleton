@@ -12,6 +12,12 @@ const config = {
     dev: process.env.NODE_ENV !== 'production',
     port: process.env.PORT || 3000,
     cors: process.env.CORS || "*",
+    dbName: process.env.DB_NAME || "name",
+    dbHost: process.env.DB_HOST || "localhost",
+    dbPort: Number(process.env.DB_PORT) || 28015,
+    dbUser: process.env.DB_USER || "admin",
+    dbPassword: process.env.DB_PASSWORD || "",
+    dbTimeout: Number(process.env.DB_TIMEOUT) || 20,
 }
 
 export default config;

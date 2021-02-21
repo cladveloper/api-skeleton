@@ -8,5 +8,6 @@ export default function(req, res, next){
         message,
         code,
         data,
+        status: res.statusCode,
     });
 }

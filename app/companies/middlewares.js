@@ -1,24 +1,68 @@
-export function createUser(req,res,next){
-    const {body} = req;
-    req.responseMessage = "A new user has been created";
-    req.responseCode = "CREATED";
-    req.responseData = body;
-    next();
+// Packages
+import boom from "@hapi/boom";
+// Imports
+import CompanyService from "./services.js";
+// Statements
+const companyService = new CompanyService;
+// Middlewares
+export function getAllCompaniesFromDb(req,res,next){
+    companyService.getAll()
+    .then(companies => {
+        req.responseMessage = "All records have been brought";
+        req.responseCode = "BROUGHT";
+        req.responseData = companies;
+        next();
+    })
+    .catch(e => next(boom.badImplementation(e)));
 }
 
-export function updateUserById(req,res,next){
-    const {body} = req;
+export function getCompanyByIdFromDb(req,res,next){
     const {id} = req.params;
-    req.responseMessage = "The user with id 2 has been updated";
-    req.responseCode = "UPDATED";
-    req.responseData = {id, ...body};
-    next();
+    companyService.getById(id)
+    .then(company => {
+        req.responseMessage = `The company with id ${company.id} has been brought`;
+        req.responseCode = "BROUGHT";
+        req.responseData = company;
+        next();
+    })
+    .catch(e => next(boom.badImplementation(e)));
 }
 
-export function deleteUserById(req,res,next){
+export function insertCompanyInDb(req,res,next){
+    const {body} = req;
+    companyService.createOne(body)
+    .then(info => {
+        req.responseMessage = "A new company has been created";
+        req.responseCode = "CREATED";
+        req.responseData = {...body, id: info.generated_keys[0]};
+        next();
+    })
+    .catch(e => next(boom.badImplementation(e)));
+}
+
+export function updateCompanyByIdFromDb(req,res,next){
+    const {body} = req;
     const {id} = req.params;
-    req.responseMessage = "The user with id 2 has been deleted";
-    req.responseCode = "REMOVED";
-    req.responseData = id;
-    next();
+    companyService.updateById(id, body)
+    .then(info => {
+        req.responseMessage = `The company with id ${id} has been updated`;
+        req.responseCode = "UPDATED";
+        req.responseData = {...body, id};
+        next();
+    })
+    .catch(e => next(boom.badImplementation(e)));
+}
+
+export function deleteCompanyByIdFromDb(req,res,next){
+    const {id} = req.params;
+    companyService.deleteById(id)
+    .then(info => {
+        req.responseMessage = `The company with id ${id} has been deleted`;
+        req.responseCode = "REMOVED";
+        req.responseData = {
+            idRemoved: id
+        };
+        next();
+    })
+    .catch(e => next(boom.badImplementation(e)));
 }

@@ -1,17 +1,13 @@
+import fs from "fs";
 import boom from '@hapi/boom';
-import config from '../../config.js';
+import config from '../../config.js'
 
 const withErrorStack = function(error, stack) {
   if (config.dev) {
-    return { ...error, stack };
+    return { error, stack };
   }
 
   return error;
-}
-
-export function logError(err, req, res, next) {
-  console.log(err);
-  next(err);
 }
 
 export function wrapError(err, req, res, next) {
@@ -19,6 +15,16 @@ export function wrapError(err, req, res, next) {
     next(boom.badImplementation(err));
   }
 
+  next(err);
+}
+
+export function logError(err, req, res, next) {
+  if(err.output && err.output.statusCode >= 500){
+    fs.writeFile("./logs", err.stack, function(err){
+      if(err) console.log(err)
+      else console.log("An error has ocurred in the application");
+    })
+  }
   next(err);
 }
 
